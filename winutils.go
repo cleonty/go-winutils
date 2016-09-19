@@ -10,6 +10,7 @@ import (
 var (
 	kernel32, _        = syscall.LoadLibrary("kernel32.dll")
 	getModuleHandle, _ = syscall.GetProcAddress(kernel32, "GetModuleHandleW")
+	moveFileEx, _      = syscall.GetProcAddress(kernel32, "MoveFileExW")
 
 	user32, _     = syscall.LoadLibrary("user32.dll")
 	messageBox, _ = syscall.GetProcAddress(user32, "MessageBoxW")
@@ -40,6 +41,8 @@ const (
 	MB_DEFBUTTON2 = 0x00000100
 	MB_DEFBUTTON3 = 0x00000200
 	MB_DEFBUTTON4 = 0x00000300
+
+	MOVEFILE_DELAY_UNTIL_REBOOT = 4
 )
 
 func abort(funcname string, err error) {
@@ -88,6 +91,16 @@ func OpenUrl(url string) (result int) {
 		0)
 	if callErr != 0 {
 		abort("Call ShellExecute", callErr)
+	}
+	result = int(ret)
+	return
+}
+
+func RemoveFileOnReboot(file string) (result int) {
+	var nargs uintptr = 3
+	ret, _, callErr := syscall.Syscall(uintptr(moveFileEx), nargs, uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(file))), uintptr(0), MOVEFILE_DELAY_UNTIL_REBOOT)
+	if callErr != 0 {
+		abort("Call MoveFileEx", callErr)
 	}
 	result = int(ret)
 	return
