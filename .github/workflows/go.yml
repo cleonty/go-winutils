@@ -1,0 +1,14 @@
+name: Go
+on: [push]
+jobs:
+  build:
+    runs-on: windows-latest
+    name: GoWinUtils
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.16
+      - run: go build -v .
+      - run: go test .
