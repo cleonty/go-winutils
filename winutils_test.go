@@ -8,7 +8,7 @@ import (
 )
 
 func TestRemoveFileOnReboot(t *testing.T) {
-	filename := "D:\\file_to_remove.txt"
+	filename := "file_to_remove.txt"
 	file, err := os.Create(filename)
 	if err != nil {
 		t.Error(err)
